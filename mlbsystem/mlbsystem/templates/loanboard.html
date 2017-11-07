@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block left %}
+
+<div class="boardnum">
+	<span>请输入工号：</span>
+	<input type="text" class="usernum" id="usernum">
+	<span class="spanalign">*</span>
+	<ul class="hide" id="usernumul">
+		
+	</ul>
+</div>
+<div class="boardnum">
+	<span style="display:inline-block;" class="fl h200">请扫描主板：</span>
+	<textarea id="boardlist"></textarea>
+	<span class="spanalign">*</span>
+</div>
+<div>
+	<span style="display:inline-block" class="fl h150">请输入备注：</span>
+	<textarea class="h150" id="remark"></textarea>
+</div>
+
+<div class="submit">
+	<span id="validatemsg" style="width:250px"></span>
+	<button class="button" onclick="loanboard()">点击借出</button>
+</div>
+
+<script type="text/javascript">
+	$(function(){
+
+		//工号输入框不为空显示查询工号列表
+		$("#usernum").focus(function(){
+			usernum = $("#usernum").val()
+			if(usernum != ''){
+				$("#usernumul").removeClass("hide")
+			}
+		})
+
+		//工号输入框值改变时触发事件
+		$('#usernum').bind('input propertychange', function() {  
+			sc = $("#usernum").val()
+			if(sc.trim() == ''){
+				$("#usernumul").addClass('hide')
+			}
+			$.ajax({
+				url:'getusernum',
+				data:{'sc':sc},
+				type:'get',
+				dataType:'JSON',
+				success:function(data){
+					str = ''
+					if(data.result){
+						$(".boardnum ul").removeClass("hide")
+						userlist = data.userlist
+						for(var i=0;i<userlist.length;i++){
+							str += '<li onclick="choosenum(this)">'+ userlist[i].usernum +'-'+ userlist[i].username +'</li>'
+						}
+						$("#usernumul").html(str)
+					}else{
+						$("#usernumul").addClass("hide")
+					}
+				},
+				error:function(xmlHq,status,errorThrows){
+					console.log(status)
+				}
+			})
+		}); 
+
+		//自动隐藏工号显示列表
+		$(document).bind('click',function(e){ 
+		　　 var e = e || window.event; //浏览器兼容性 
+		　　 var elem = e.target || e.srcElement; 
+	　　　　 if (elem.id != 'usernumul' && elem.id != 'usernum') { 
+	　　　　      $("#usernumul").addClass("hide")
+	　　　　 }
+		})
+	})
+
+	//选择工号
+	function choosenum(obj){
+		usernum = $(obj).text().split('-')[0]
+		$("#usernum").val(usernum)
+		$(this).parent().addClass("hide")
+	}
+
+	function loanboard(){
+		var usernum = $("#usernum").val()
+		var boardlist = $("#boardlist").val().split('\n')
+		var remark = $("#remark").val()
+		if(usernum == '' || boardlist == ''){
+			alert('工号或主板输入不能为空！')
+			return
+		}
+		data = {'usernum':usernum,'boardlist':JSON.stringify(boardlist),'remark':remark}
+		$.ajax({
+			url:'confirmloan',
+			data:data,
+			type:'get',
+			dataType:'JSON',
+			success:function(data){
+				if(data.result){
+					alert('借出成功')
+					document.location.reload()
+				}else{
+					alert(data.errormsg)
+				}
+			},
+			error:function(xmlHq,status,errorThrows){
+				console.log(status)
+				console.log(errorThrows)
+			}
+		})
+	}
+
+</script>
+
+{% endblock %}

@@ -1,0 +1,31 @@
+<table class="zebra">
+	<thead>
+    <tr>
+        <th>序号</th>
+		<th>pro_cfg</th>
+		<th>config</th>
+		<th>借出时间</th>
+		<th>借板人</th>
+    </tr>
+	</thead>
+	<tbody>
+		{% for loanboard in loanboard_list %}
+		<tr>
+			<td>{{ forloop.counter }}</td>        
+	        <td>{{ loanboard.board.pro_cfg.pro_cfg }}</td>
+	        <td>{{ loanboard.board.config }}</td>
+	        <td>{{ loanboard.loantime }}</td>
+	        <td>{{ loanboard.user.username }}</td>
+		<tr>
+		{% endfor %}
+	</tbody>
+	<tfoot>
+	    <tr>
+	        <td></td>        
+	        <td></td>
+	        <td></td>
+	        <td></td>
+	        <td></td>
+		</tr>
+	</tfoot>
+</table>

@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block content %}
+<div class="demo" style="margin:20px 40px;">
+        <table class="bordered">
+          <thead>
+            <tr>
+                <th>pro_cfg</th>        
+                <th>编码</th>
+                <th>SN号</th>
+                <th>Config</th>
+                <th>借出人</th>
+                <th>借出时间</th>
+                <th>备注</th>
+                <th>操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% if loanboard_list %}
+                {% for board in loanboard_list %}    
+                    <tr>
+                        <td>{{board.board.pro_cfg.pro_cfg}}</td>
+                        <td>{{board.board.boardcode}}</td>
+                        <td>{{board.board.sn}}</td>
+                        <td>{{board.board.config}}</td>
+                        <td>{{board.user.username}}</td>
+                        <td>{{board.loantime}}</td>
+                        <td>{{board.remark}}</td>
+                        <td>update,delete</td>
+                    </tr>
+                {% endfor %}
+                {% else %}
+                    <tr><td  colspan="9" class="tc">无数据</td></tr>
+            {% endif %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
